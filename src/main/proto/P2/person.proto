@@ -1,0 +1,13 @@
+syntax = "proto3";
+package package2;
+option java_multiple_files=true;
+option java_package= "com.learner.grpc_learning.proto.p2";
+
+/*
+  multiline comments syntax
+ */
+message Person{
+  //single line comments syntax
+  string abc=1;
+  int64 age =2;
+}

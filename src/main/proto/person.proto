@@ -1,7 +1,0 @@
-syntax = "proto3";
-option java_package= "com.learner.grpc_learning.proto";
-
-message Person{
-  string abc=1;
-  int64 age =2;
-}
