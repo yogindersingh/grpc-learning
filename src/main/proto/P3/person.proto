@@ -1,0 +1,13 @@
+syntax = "proto3";
+package package3;
+option java_multiple_files=true;
+option java_package= "com.learner.grpc_learning.proto.p3";
+
+message Person{
+  string abc=1;
+  int64 age =2;
+  sint32 balance=3;
+  int64 transaction_id=4;
+  float transaction_amount=5;
+  bool primary_holder=6;
+}
