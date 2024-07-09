@@ -1,0 +1,31 @@
+syntax = "proto3";
+package package5;
+option java_multiple_files=true;
+option java_package= "com.learner.grpc_learning.proto.p5";
+
+message ShowRoom{
+  string name=1;
+  repeated Car cars=2;
+}
+
+enum BodyStyle{
+  SEDAN=0;
+  COUPE=1;
+  SUV=2;
+}
+
+message Car{
+  string car_name=1;
+  int32 manufacture_year=2;
+  BodyStyle bodystyle=3;
+}
+
+message Library{
+  string name=1;
+  map<int32,Book> rack_book_map=2;
+}
+
+message Book{
+  string name=1;
+}
+
