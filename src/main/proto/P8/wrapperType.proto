@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package package8;
+
+option java_multiple_files=true;
+option java_package= "com.learner.grpc_learning.proto.p8";
+
+import "google/protobuf/wrappers.proto";
+
+message wrapperPlay{
+  google.protobuf.Int32Value age=1;
+
+}
