@@ -21,3 +21,6 @@ Here, I am learning and trying out gRPC, a modern way to make different parts of
 |bool |boolean |
 |string |string |
 |bytes |Bytestring |
+
+
+![](src/main/resources/static/img1.png)
