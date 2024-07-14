@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package package9;
+
+option java_multiple_files=true;
+option java_package= "com.learner.grpc_learning.proto.p9";
+message BankRequest{
+  int32 accountNumber=1;
+}
+
+message BankResponse{
+  int32 accountNumber=1;
+  int32 balance=2;
+}
+
+service BankService{
+  rpc getAccountDetails(BankRequest) returns (BankResponse);
+}
+
