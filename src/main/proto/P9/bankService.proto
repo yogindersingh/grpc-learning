@@ -4,6 +4,8 @@ package package9;
 
 option java_multiple_files=true;
 option java_package= "com.learner.grpc_learning.proto.p9";
+
+import "google/protobuf/empty.proto";
 message BankRequest{
   int32 accountNumber=1;
 }
@@ -13,7 +15,13 @@ message BankResponse{
   int32 balance=2;
 }
 
+message BankAccounts{
+  repeated BankResponse bankresponse=1;
+}
+
 service BankService{
+  //unary
   rpc getAccountDetails(BankRequest) returns (BankResponse);
+  rpc getAccounts(google.protobuf.Empty) returns (BankAccounts);
 }
 
