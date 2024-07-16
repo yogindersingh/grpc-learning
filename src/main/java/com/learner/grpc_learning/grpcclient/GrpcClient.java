@@ -24,23 +24,13 @@ public class GrpcClient {
     logger.info("{}", response);
 
     BankServiceGrpc.BankServiceStub bankServiceStub1 = BankServiceGrpc.newStub(channel);
-    bankServiceStub1.getAccountDetails(request, new StreamObserver<>() {
-      @Override
-      public void onNext(BankResponse bankResponse) {
-        logger.info("bankResponse : {}", bankResponse);
-      }
 
-      @Override
-      public void onError(Throwable throwable) {
-        logger.info("error : ", throwable);
-      }
+    ResponseObserver<BankResponse> responseObserver = new ResponseObserver<>(1);
+    bankServiceStub1.getAccountDetails(request, responseObserver);
+    responseObserver.await();
 
-      @Override
-      public void onCompleted() {
-        logger.info("completed");
-      }
-    });
-    Thread.sleep(1000);
     channel.shutdown();
   }
+
+
 }
