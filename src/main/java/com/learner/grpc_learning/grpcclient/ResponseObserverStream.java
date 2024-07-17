@@ -11,17 +11,17 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Getter
-public class ResponseObserver<T> implements StreamObserver<T> {
+public class ResponseObserverStream<T> implements StreamObserver<T> {
 
   private final List<T> list = new ArrayList<>();
   private Throwable throwable;
   private final CountDownLatch countDownLatch;
 
-  private ResponseObserver(){
+  private ResponseObserverStream(){
     countDownLatch = new CountDownLatch(1);
   }
 
-  public ResponseObserver(int countDown) {
+  public ResponseObserverStream(int countDown) {
     this.countDownLatch = new CountDownLatch(countDown);
   }
 
@@ -29,7 +29,6 @@ public class ResponseObserver<T> implements StreamObserver<T> {
   public void onNext(T t) {
     log.info("response recieved : {}",t);
     list.add(t);
-    countDownLatch.countDown();
   }
 
   @Override
