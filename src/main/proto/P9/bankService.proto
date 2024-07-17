@@ -19,9 +19,21 @@ message BankAccounts{
   repeated BankResponse bankresponse=1;
 }
 
+message WithdrawalRequest{
+  int32 account_number=1;
+  int32 amount=2;
+}
+
+message WithdrawalResponse{
+  int32 amount=1;
+}
+
 service BankService{
   //unary
   rpc getAccountDetails(BankRequest) returns (BankResponse);
   rpc getAccounts(google.protobuf.Empty) returns (BankAccounts);
+
+  //server streaming
+  rpc getWithdrawalAmount(WithdrawalRequest) returns (stream WithdrawalResponse);
 }
 
