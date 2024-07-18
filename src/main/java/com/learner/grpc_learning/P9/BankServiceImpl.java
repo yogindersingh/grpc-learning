@@ -5,8 +5,10 @@ import com.learner.grpc_learning.proto.p9.BankAccounts;
 import com.learner.grpc_learning.proto.p9.BankRequest;
 import com.learner.grpc_learning.proto.p9.BankResponse;
 import com.learner.grpc_learning.proto.p9.BankServiceGrpc;
+import com.learner.grpc_learning.proto.p9.DepositRequest;
 import com.learner.grpc_learning.proto.p9.WithdrawalRequest;
 import com.learner.grpc_learning.proto.p9.WithdrawalResponse;
+import com.learner.grpc_learning.responseObservers.DepositRequestStreamObserver;
 import io.grpc.stub.StreamObserver;
 
 import java.util.List;
@@ -43,5 +45,10 @@ public class BankServiceImpl extends BankServiceGrpc.BankServiceImplBase {
       responseObserver.onNext(WithdrawalResponse.newBuilder().setAmount(amount/10).build());
     }
     responseObserver.onCompleted();
+  }
+
+  @Override
+  public StreamObserver<DepositRequest> saveAmount(StreamObserver<BankResponse> responseObserver) {
+    return new DepositRequestStreamObserver(responseObserver);
   }
 }

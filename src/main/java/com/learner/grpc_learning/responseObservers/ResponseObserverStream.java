@@ -1,4 +1,4 @@
-package com.learner.grpc_learning.grpcclient;
+package com.learner.grpc_learning.responseObservers;
 
 import io.grpc.stub.StreamObserver;
 import lombok.Getter;

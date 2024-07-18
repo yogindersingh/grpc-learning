@@ -28,6 +28,13 @@ message WithdrawalResponse{
   int32 amount=1;
 }
 
+message DepositRequest{
+  oneof reque{
+    int32 account_number=1;
+    int32 money=2;
+  }
+}
+
 service BankService{
   //unary
   rpc getAccountDetails(BankRequest) returns (BankResponse);
@@ -35,5 +42,8 @@ service BankService{
 
   //server streaming
   rpc getWithdrawalAmount(WithdrawalRequest) returns (stream WithdrawalResponse);
+
+  //client streaming
+  rpc saveAmount(stream DepositRequest) returns (BankResponse);
 }
 
