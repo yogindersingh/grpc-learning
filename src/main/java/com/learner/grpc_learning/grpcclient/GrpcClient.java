@@ -4,6 +4,9 @@ import com.learner.grpc_learning.proto.p9.BankRequest;
 import com.learner.grpc_learning.proto.p9.BankResponse;
 import com.learner.grpc_learning.proto.p9.BankServiceGrpc;
 import com.learner.grpc_learning.proto.p9.DepositRequest;
+import com.learner.grpc_learning.proto.p9.TransferRequest;
+import com.learner.grpc_learning.proto.p9.TransferResponse;
+import com.learner.grpc_learning.proto.p9.TransferServiceGrpc;
 import com.learner.grpc_learning.proto.p9.WithdrawalRequest;
 import com.learner.grpc_learning.proto.p9.WithdrawalResponse;
 import com.learner.grpc_learning.responseObservers.ResponseObserver;
@@ -74,6 +77,18 @@ public class GrpcClient {
     depositStreamObserver.onNext(DepositRequest.newBuilder().setMoney(3).build());
     depositStreamObserver.onNext(DepositRequest.newBuilder().setMoney(3).build());
     depositStreamObserver.onCompleted();
+
+    TransferServiceGrpc.TransferServiceStub transferServiceStub=TransferServiceGrpc.newStub(channel);
+    ResponseObserverStream<TransferResponse> responseObserver2 = new ResponseObserverStream<>(1);
+    StreamObserver<TransferRequest> transferRequst = transferServiceStub.transferMoney(
+        responseObserver2);
+    transferRequst.onNext(TransferRequest.newBuilder().setFromAccount(1).setToAccount(1).setAmount(10).build());
+    transferRequst.onNext(TransferRequest.newBuilder().setFromAccount(1).setToAccount(2).setAmount(10).build());
+    transferRequst.onNext(TransferRequest.newBuilder().setFromAccount(1).setToAccount(2).setAmount(10000).build());
+    transferRequst.onNext(TransferRequest.newBuilder().setFromAccount(2).setToAccount(3).setAmount(100).build());
+    transferRequst.onCompleted();
+    responseObserver2.await();
+
 
     channel.shutdown();
   }

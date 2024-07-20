@@ -1,6 +1,7 @@
 package com.learner.grpc_learning.grpcServer;
 
 import com.learner.grpc_learning.P9.BankServiceImpl;
+import com.learner.grpc_learning.P9.TransferServiceImple;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class GrpcServer {
 
   public static void main(String[] args) throws InterruptedException {
-    new GrpcServer(new BankServiceImpl()).start().awaitTermination();
+    new GrpcServer(new BankServiceImpl(),new TransferServiceImple()).start().awaitTermination();
   }
 
   public static Server server;
