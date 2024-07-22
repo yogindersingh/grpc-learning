@@ -1,5 +1,8 @@
 package com.learner.grpc_learning.grpcclient;
 
+import com.learner.grpc_learning.proto.p10.FlowControlServiceGrpc;
+import com.learner.grpc_learning.proto.p10.input;
+import com.learner.grpc_learning.proto.p10.output;
 import com.learner.grpc_learning.proto.p9.BankRequest;
 import com.learner.grpc_learning.proto.p9.BankResponse;
 import com.learner.grpc_learning.proto.p9.BankServiceGrpc;
@@ -39,20 +42,19 @@ public class GrpcClient {
     bankServiceStub1.getAccountDetails(request, responseObserver);
     responseObserver.await();
 
-    logger.info("response from observer : {}",responseObserver.getList());
+    logger.info("response from observer : {}", responseObserver.getList());
 
 
     WithdrawalRequest withdrawalRequ = WithdrawalRequest.newBuilder().setAmount(100).setAccountNumber(1).build();
     Iterator<WithdrawalResponse> resp = bankServiceStub.getWithdrawalAmount(withdrawalRequ);
 
-    while (resp.hasNext())
-    {
+    while (resp.hasNext()) {
       WithdrawalResponse resp1 = resp.next();
       logger.info("{}", resp1);
     }
 
     ResponseObserverStream<WithdrawalResponse> responseObserver1 = new ResponseObserverStream<>(1);
-    bankServiceStub1.getWithdrawalAmount(withdrawalRequ,responseObserver1);
+    bankServiceStub1.getWithdrawalAmount(withdrawalRequ, responseObserver1);
     responseObserver1.await();
 
     StreamObserver<DepositRequest> depositStreamObserver = bankServiceStub1.saveAmount(
@@ -64,7 +66,7 @@ public class GrpcClient {
 
           @Override
           public void onError(Throwable throwable) {
-            logger.error("Error : ",throwable);
+            logger.error("Error : ", throwable);
           }
 
           @Override
@@ -78,7 +80,7 @@ public class GrpcClient {
     depositStreamObserver.onNext(DepositRequest.newBuilder().setMoney(3).build());
     depositStreamObserver.onCompleted();
 
-    TransferServiceGrpc.TransferServiceStub transferServiceStub=TransferServiceGrpc.newStub(channel);
+    TransferServiceGrpc.TransferServiceStub transferServiceStub = TransferServiceGrpc.newStub(channel);
     ResponseObserverStream<TransferResponse> responseObserver2 = new ResponseObserverStream<>(1);
     StreamObserver<TransferRequest> transferRequst = transferServiceStub.transferMoney(
         responseObserver2);
@@ -89,6 +91,37 @@ public class GrpcClient {
     transferRequst.onCompleted();
     responseObserver2.await();
 
+    FlowControlServiceGrpc.FlowControlServiceStub flowControlServiceGrpc = FlowControlServiceGrpc.newStub(channel);
+    StreamObserver<input> requestStream = flowControlServiceGrpc.getMessages(
+        new StreamObserver<output>() {
+          @Override
+          public void onNext(output output) {
+            logger.info("response recieved - {}", output);
+          }
+
+          @Override
+          public void onError(Throwable throwable) {
+            logger.error("Error : ", throwable);
+          }
+
+          @Override
+          public void onCompleted() {
+            logger.info("completed");
+          }
+        });
+
+    requestStream.onNext(input.newBuilder().setSize(10).build());
+
+    Thread.sleep(500);
+    requestStream.onNext(input.newBuilder().setSize(30).build());
+    Thread.sleep(500);
+    requestStream.onNext(input.newBuilder().setSize(30).build());
+    Thread.sleep(500);
+    requestStream.onNext(input.newBuilder().setSize(30).build());
+    Thread.sleep(500);
+    requestStream.onNext(input.newBuilder().setSize(30).build());
+
+    Thread.sleep(1000);
 
     channel.shutdown();
   }
