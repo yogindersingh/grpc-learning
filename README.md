@@ -1,6 +1,13 @@
 # Grpc-learning
 Here, I am learning and trying out gRPC, a modern way to make different parts of software talk to each other quickly and efficiently. Exploring examples to see how to use gRPC for building software that works well across many computers. Just learning how gRPC can help make my programs faster and more reliable!
 
+# Grpc Status Codes
+Reference Link for status codes
+https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+
+Reference Link for codes proto
+https://github.com/googleapis/googleapis/blob/master/google/rpc/code.proto
+
 
 # Scalar Value Types
 
