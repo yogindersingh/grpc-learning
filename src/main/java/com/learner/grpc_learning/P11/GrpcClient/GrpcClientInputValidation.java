@@ -32,14 +32,14 @@ public class GrpcClientInputValidation {
     try {
       bankServiceBlockingStub.getWithdrawalAmount(
           WithdrawalRequest.newBuilder().setAccountNumber(100).setAmount(1).build()).hasNext();
-    } catch (Exception exception) {
+    } catch (StatusRuntimeException exception) {
       logger.error(exception.getMessage());
     }
 
     try {
       bankServiceBlockingStub.getWithdrawalAmount(
           WithdrawalRequest.newBuilder().setAccountNumber(1).setAmount(1000000).build()).hasNext();
-    } catch (Exception e) {
+    } catch (StatusRuntimeException e) {
       logger.error(e.getMessage());
     }
     bankServiceBlockingStub.getWithdrawalAmount(

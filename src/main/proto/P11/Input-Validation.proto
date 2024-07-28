@@ -23,6 +23,15 @@ message WithdrawalResponse{
   int32 amount=1;
 }
 
+enum ValidationCode{
+  UNKNOWN=0;
+  INVALID_ACCOUNT=1;
+  INVALID_AMOUNT=2;
+}
+
+message ErrorMessage{
+  ValidationCode error_code=1;
+}
 
 service BankService{
   //unary

@@ -7,7 +7,6 @@ import com.learner.grpc_learning.proto.p11.BankResponse;
 import com.learner.grpc_learning.proto.p11.BankServiceGrpc;
 import com.learner.grpc_learning.proto.p11.WithdrawalRequest;
 import com.learner.grpc_learning.proto.p11.WithdrawalResponse;
-import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceImplBase {
@@ -16,7 +15,6 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
   public void getAccountDetails(BankRequest request,
                                 StreamObserver<com.learner.grpc_learning.proto.p11.BankResponse> responseObserver) {
     RequestValidator.validateAccountId(request.getAccountNumber())
-        .map(Status::asRuntimeException)
         .ifPresentOrElse(responseObserver::onError, () -> startFetchDetails(responseObserver, request));
   }
 
@@ -34,7 +32,6 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
     RequestValidator.validateAccountId(request.getAccountNumber())
         .or(() -> RequestValidator.validateAmountIsMultipleOfTen(request.getAmount()))
         .or(() -> RequestValidator.validateAmountIsLessThanBalance(request.getAmount(), request.getAccountNumber()))
-        .map(Status::asRuntimeException)
         .ifPresentOrElse(responseObserver::onError, () -> startWithdrawaingMoney(request, responseObserver));
   }
 
