@@ -5,12 +5,15 @@ import com.learner.grpc_learning.proto.p11.BankRequest;
 import com.learner.grpc_learning.proto.p11.BankResponse;
 import com.learner.grpc_learning.proto.p11.BankServiceGrpc;
 import com.learner.grpc_learning.proto.p11.WithdrawalRequest;
+import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class GrpcClientInputValidation {
 
@@ -44,14 +47,15 @@ public class GrpcClientInputValidation {
     }
     bankServiceBlockingStub.getWithdrawalAmount(
         WithdrawalRequest.newBuilder().setAccountNumber(1).setAmount(1000).build()).hasNext();
-    BankResponse resp = bankServiceBlockingStub.getAccountDetails(
+    BankResponse resp = bankServiceBlockingStub.withDeadline(Deadline.after(2, TimeUnit.SECONDS)).getAccountDetails(
         BankRequest.newBuilder().setAccountNumber(1).build());
 
     logger.info(resp.toString());
 
     BankServiceGrpc.BankServiceStub bankServiceStub = BankServiceGrpc.newStub(channel);
 
-    bankServiceStub.getAccountDetails(BankRequest.newBuilder().setAccountNumber(10).build(), new StreamObserver<BankResponse>() {
+    bankServiceStub.withDeadline(Deadline.after(2,TimeUnit.SECONDS)).getAccountDetails(BankRequest.newBuilder().setAccountNumber(10).build(),
+        new StreamObserver<BankResponse>() {
 
       @Override
       public void onNext(BankResponse bankResponse) {

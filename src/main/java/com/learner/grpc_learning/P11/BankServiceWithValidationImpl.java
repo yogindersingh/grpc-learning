@@ -7,6 +7,7 @@ import com.learner.grpc_learning.proto.p11.BankResponse;
 import com.learner.grpc_learning.proto.p11.BankServiceGrpc;
 import com.learner.grpc_learning.proto.p11.WithdrawalRequest;
 import com.learner.grpc_learning.proto.p11.WithdrawalResponse;
+import io.grpc.Context;
 import io.grpc.stub.StreamObserver;
 
 public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceImplBase {
@@ -39,7 +40,7 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
                                              StreamObserver<WithdrawalResponse> responseObserver) {
     int amount = request.getAmount();
     Integer amountWidhrawed = 0;
-    for (int i = 0; i <  10; i++) {
+    for (int i = 0; i <  10 && !Context.current().isCancelled(); i++) {
       amountWidhrawed = amountWidhrawed+amount / 10;
       responseObserver.onNext(WithdrawalResponse.newBuilder().setAmount(amount / 10).build());
     }
