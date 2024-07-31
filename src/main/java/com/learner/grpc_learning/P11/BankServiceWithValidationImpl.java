@@ -8,6 +8,7 @@ import com.learner.grpc_learning.proto.p11.BankServiceGrpc;
 import com.learner.grpc_learning.proto.p11.WithdrawalRequest;
 import com.learner.grpc_learning.proto.p11.WithdrawalResponse;
 import io.grpc.Context;
+import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 
 public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceImplBase {
@@ -23,6 +24,7 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
     com.learner.grpc_learning.proto.p11.BankResponse bankResponse =
         com.learner.grpc_learning.proto.p11.BankResponse.newBuilder().setAccountNumber(request.getAccountNumber())
             .setBalance(AccountRepository.getAccountDetails(request.getAccountNumber())).build();
+    ((ServerCallStreamObserver<BankResponse>)responseObserver).setCompression("gzip");
     responseObserver.onNext(bankResponse);
     responseObserver.onCompleted();
   }

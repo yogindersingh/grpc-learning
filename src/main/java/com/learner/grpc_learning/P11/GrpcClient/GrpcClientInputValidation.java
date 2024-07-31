@@ -54,7 +54,7 @@ public class GrpcClientInputValidation {
 
     BankServiceGrpc.BankServiceStub bankServiceStub = BankServiceGrpc.newStub(channel);
 
-    bankServiceStub.withDeadline(Deadline.after(2,TimeUnit.SECONDS)).getAccountDetails(BankRequest.newBuilder().setAccountNumber(10).build(),
+    bankServiceStub.withCompression("gzip").withDeadline(Deadline.after(2,TimeUnit.SECONDS)).getAccountDetails(BankRequest.newBuilder().setAccountNumber(10).build(),
         new StreamObserver<BankResponse>() {
 
       @Override
