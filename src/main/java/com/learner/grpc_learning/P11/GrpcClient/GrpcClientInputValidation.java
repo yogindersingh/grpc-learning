@@ -1,5 +1,6 @@
 package com.learner.grpc_learning.P11.GrpcClient;
 
+import com.learner.grpc_learning.P11.ClientInterceptorImpl;
 import com.learner.grpc_learning.grpcclient.GrpcClient;
 import com.learner.grpc_learning.proto.p11.BankRequest;
 import com.learner.grpc_learning.proto.p11.BankResponse;
@@ -13,6 +14,7 @@ import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class GrpcClientInputValidation {
@@ -22,7 +24,11 @@ public class GrpcClientInputValidation {
 
     Logger logger = LoggerFactory.getLogger(GrpcClient.class);
 
-    ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 6565).usePlaintext().build();
+    ManagedChannel channel =
+        ManagedChannelBuilder.forAddress("localhost", 6565)
+//            .executor(Executors.newCachedThreadPool())
+            .intercept(new ClientInterceptorImpl()).usePlaintext()
+            .build();
 
     BankServiceGrpc.BankServiceBlockingStub bankServiceBlockingStub = BankServiceGrpc.newBlockingStub(channel);
 
@@ -54,27 +60,28 @@ public class GrpcClientInputValidation {
 
     BankServiceGrpc.BankServiceStub bankServiceStub = BankServiceGrpc.newStub(channel);
 
-    bankServiceStub.withCompression("gzip").withDeadline(Deadline.after(2,TimeUnit.SECONDS)).getAccountDetails(BankRequest.newBuilder().setAccountNumber(10).build(),
-        new StreamObserver<BankResponse>() {
+    bankServiceStub.withCompression("gzip").withDeadline(Deadline.after(2, TimeUnit.SECONDS))
+        .getAccountDetails(BankRequest.newBuilder().setAccountNumber(10).build(),
+            new StreamObserver<BankResponse>() {
 
-      @Override
-      public void onNext(BankResponse bankResponse) {
-        logger.info(bankResponse.toString());
-      }
+              @Override
+              public void onNext(BankResponse bankResponse) {
+                logger.info(bankResponse.toString());
+              }
 
-      @Override
-      public void onError(Throwable throwable) {
-        logger.error(throwable.getMessage());
-      }
+              @Override
+              public void onError(Throwable throwable) {
+                logger.error(throwable.getMessage());
+              }
 
-      @Override
-      public void onCompleted() {
-        logger.info("completed");
-      }
-    });
+              @Override
+              public void onCompleted() {
+                logger.info("completed");
+              }
+            });
 
     try {
-      Thread.sleep(1000);
+      Thread.sleep(10);
     } catch (Exception e) {
       e.printStackTrace();
     }
