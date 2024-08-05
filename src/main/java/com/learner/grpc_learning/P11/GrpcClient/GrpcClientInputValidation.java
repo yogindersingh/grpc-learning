@@ -14,7 +14,6 @@ import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class GrpcClientInputValidation {
@@ -27,7 +26,11 @@ public class GrpcClientInputValidation {
     ManagedChannel channel =
         ManagedChannelBuilder.forAddress("localhost", 6565)
 //            .executor(Executors.newCachedThreadPool())
-            .intercept(new ClientInterceptorImpl()).usePlaintext()
+            .intercept(new ClientInterceptorImpl()
+
+                //example to pass metadata for every call
+//                ,MetadataUtils.newAttachHeadersInterceptor(Metadata.Key.of("api-key"))
+            ).usePlaintext()
             .build();
 
     BankServiceGrpc.BankServiceBlockingStub bankServiceBlockingStub = BankServiceGrpc.newBlockingStub(channel);
