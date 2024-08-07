@@ -6,14 +6,18 @@ import com.learner.grpc_learning.proto.p11.BankRequest;
 import com.learner.grpc_learning.proto.p11.BankResponse;
 import com.learner.grpc_learning.proto.p11.BankServiceGrpc;
 import com.learner.grpc_learning.proto.p11.WithdrawalRequest;
+import io.grpc.CallCredentials;
+import io.grpc.ClientInterceptor;
 import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class GrpcClientInputValidation {
@@ -54,8 +58,10 @@ public class GrpcClientInputValidation {
     } catch (StatusRuntimeException e) {
       logger.error(e.getMessage());
     }
-    bankServiceBlockingStub.getWithdrawalAmount(
-        WithdrawalRequest.newBuilder().setAccountNumber(1).setAmount(1000).build()).hasNext();
+    bankServiceBlockingStub
+        //example to send the user details too in the request
+        //.withCallCredentials(new UserTokenCallCredentials("user1"))
+        .getWithdrawalAmount(WithdrawalRequest.newBuilder().setAccountNumber(1).setAmount(1000).build()).hasNext();
     BankResponse resp = bankServiceBlockingStub.withDeadline(Deadline.after(2, TimeUnit.SECONDS)).getAccountDetails(
         BankRequest.newBuilder().setAccountNumber(1).build());
 
@@ -92,5 +98,23 @@ public class GrpcClientInputValidation {
     channel.shutdown();
   }
 
+  private static class UserTokenCallCredentials extends CallCredentials {
+
+    private String token;
+
+    public UserTokenCallCredentials(String token) {
+      this.token = token;
+    }
+
+    @Override
+    public void applyRequestMetadata(RequestInfo requestInfo, Executor executor, MetadataApplier metadataApplier) {
+      executor.execute(() -> {
+        Metadata.Key<String> key = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
+        Metadata metadata = new Metadata();
+        metadata.put(key,token);
+        metadataApplier.apply(metadata);
+      });
+    }
+  }
 
 }
