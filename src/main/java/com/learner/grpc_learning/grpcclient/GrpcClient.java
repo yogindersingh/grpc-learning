@@ -30,6 +30,11 @@ public class GrpcClient {
 
     ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 6565).usePlaintext().build();
 
+// Code change to call server with self signed certificate
+//    ConfigureSSL configureSSL=new ConfigureSSL();
+//    ManagedChannel channel = NettyChannelBuilder.forAddress("localhost", 6565).sslContext(configureSSL.clientSslContext()).build();
+
+
     BankServiceGrpc.BankServiceBlockingStub bankServiceStub = BankServiceGrpc.newBlockingStub(channel);
     BankRequest request = BankRequest.newBuilder().setAccountNumber(1).build();
     BankResponse response = bankServiceStub.getAccountDetails(

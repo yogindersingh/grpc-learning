@@ -38,6 +38,11 @@ public class GrpcServer {
     ServerBuilder<?> serverBuilder = ServerBuilder.forPort(port).intercept(new ServerResponseObserver());
     Arrays.stream(bindableServices).forEach(serverBuilder::addService);
     server = serverBuilder.build();
+
+    // Code to start server with ssl context (self signed certificate)
+//    ConfigureSSL configureSSl=new ConfigureSSL();
+//    server=((NettyServerBuilder)serverBuilder).sslContext(configureSSl.serverSslContext()).build();
+
   }
 
   public GrpcServer start() {
