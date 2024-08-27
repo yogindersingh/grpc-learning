@@ -16,6 +16,8 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
   @Override
   public void getAccountDetails(BankRequest request,
                                 StreamObserver<com.learner.grpc_learning.proto.p11.BankResponse> responseObserver) {
+    //changes to fetch context key values
+    //String resp = GRPCConstants.USER_ROLE_KEY.get();
     RequestValidator.validateAccountId(request.getAccountNumber())
         .ifPresentOrElse(responseObserver::onError, () -> startFetchDetails(responseObserver, request));
   }
@@ -24,7 +26,7 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
     com.learner.grpc_learning.proto.p11.BankResponse bankResponse =
         com.learner.grpc_learning.proto.p11.BankResponse.newBuilder().setAccountNumber(request.getAccountNumber())
             .setBalance(AccountRepository.getAccountDetails(request.getAccountNumber())).build();
-    ((ServerCallStreamObserver<BankResponse>)responseObserver).setCompression("gzip");
+    ((ServerCallStreamObserver<BankResponse>) responseObserver).setCompression("gzip");
     responseObserver.onNext(bankResponse);
     responseObserver.onCompleted();
   }
@@ -42,12 +44,12 @@ public class BankServiceWithValidationImpl extends BankServiceGrpc.BankServiceIm
                                              StreamObserver<WithdrawalResponse> responseObserver) {
     int amount = request.getAmount();
     Integer amountWidhrawed = 0;
-    for (int i = 0; i <  10 && !Context.current().isCancelled(); i++) {
-      amountWidhrawed = amountWidhrawed+amount / 10;
+    for (int i = 0; i < 10 && !Context.current().isCancelled(); i++) {
+      amountWidhrawed = amountWidhrawed + amount / 10;
       responseObserver.onNext(WithdrawalResponse.newBuilder().setAmount(amount / 10).build());
     }
     AccountRepository.updateAccountDetails(request.getAccountNumber(),
-        AccountRepository.getAccountDetails(request.getAccountNumber())-amountWidhrawed);
+        AccountRepository.getAccountDetails(request.getAccountNumber()) - amountWidhrawed);
     responseObserver.onCompleted();
   }
 
